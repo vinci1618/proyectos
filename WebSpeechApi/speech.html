@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Web Speech API Demo</title>
+<style>
+  * {
+    font-family: Verdana, Arial, sans-serif;
+  }
+
+</style>
+<div id="over">
+<button onclick="cancel();">terminar</button>
+</div>
+<!-- <audio src="AmorProhibido_Moderatto.mp3" autoplay preload="auto"></audio>-->
+
+
+ <!--<video width="1250" height="768" controls autoplay>
+  <source src="C006C001_140912_R2ZD.mp4" type="video/mp4">    
+</video> -->
+<script>
+
+
+
+function cancel(){
+
+recognition.stop();
+
+}
+  var words = {};
+
+  var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = "es-MX";
+  //recognition.grammars = {'hola','no','claro'}
+
+  recognition.onstart = function() {
+    recognizing = true;
+    console.log("init");
+  };
+
+
+   recognition.onspeechstart = function(e){
+
+      console.log("speech start");
+
+   }
+
+
+   recognition.onspeechend = function(e){
+
+      console.log("speech end");
+
+   }
+var interim_transcript = "";
+var final_transcript ="";
+recognition.onresult = function(e) {
+
+    for (var i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        final_transcript += event.results[i][0].transcript;
+      } else {
+        interim_transcript = event.results[i][0].transcript;
+      }
+    }
+
+    console.log("buffer: "+interim_transcript);
+    console.log("final: "+final_transcript);
+
+/*  
+  for (var i = e.resultIndex; i < e.results.length; ++i) { 
+
+      console.log(e.results[i][0].transcript);
+      words[t] = {'time':t, 'word':e.results[i][0].interpretation};
+
+   }
+   */  
+} 
+
+
+recognition.onerror = function(event) {
+    if (event.error == 'no-speech') {
+      console.log("no speech");
+    }
+    if (event.error == 'audio-capture') {
+      console.log("micrphone error")
+    }
+    if (event.error == 'not-allowed') {
+      if (event.timeStamp - start_timestamp < 100) {
+          console.log("no permitdo");
+      } else {
+        console.log("no permitdo");
+      }
+    }
+  };
+
+  recognition.onend = function() {
+    recognizing = false;
+    console.log("termino");
+    console.log(words);
+  };
+  recognition.start();
+  var t = 0;
+  window.setInterval(function(){
+    t+=1;
+  },1);  
+
+</script>
